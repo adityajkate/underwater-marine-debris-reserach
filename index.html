@@ -1,0 +1,1437 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NirmalSagar - Core Mathematical Formulations</title>
+  <meta name="description"
+    content="Core mathematical formulas and algorithms actively implemented in the NirmalSagar underwater marine debris detection framework." />
+
+  <!-- KaTeX — load synchronously so renderMathInElement is available on window.onload -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous" />
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+    crossorigin="anonymous"></script>
+
+  <!-- JetBrains Mono for code -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- DejaVu Serif via CDN @font-face -->
+  <style>
+    @font-face {
+      font-family: 'DejaVu Serif';
+      src: url('https://cdn.jsdelivr.net/npm/dejavu-fonts-ttf@2.37.3/ttf/DejaVuSerif.ttf') format('truetype');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: 'DejaVu Serif';
+      src: url('https://cdn.jsdelivr.net/npm/dejavu-fonts-ttf@2.37.3/ttf/DejaVuSerif-Bold.ttf') format('truetype');
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: 'DejaVu Serif';
+      src: url('https://cdn.jsdelivr.net/npm/dejavu-fonts-ttf@2.37.3/ttf/DejaVuSerif-Italic.ttf') format('truetype');
+      font-weight: 400;
+      font-style: italic;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: 'DejaVu Serif';
+      src: url('https://cdn.jsdelivr.net/npm/dejavu-fonts-ttf@2.37.3/ttf/DejaVuSerif-BoldItalic.ttf') format('truetype');
+      font-weight: 700;
+      font-style: italic;
+      font-display: swap;
+    }
+  </style>
+
+  <style>
+    /* ==========================================================================
+       MINIMAL ACADEMIC — DejaVu Serif + Light Parchment Theme
+       Clean, responsive, non-AI-slop
+       ========================================================================== */
+
+    :root {
+      --bg: #f7f4ef;
+      --bg-card: #ffffff;
+      --bg-code: #1e1e2e;
+      --bg-math: #fafaf7;
+      --border: #d8d2c8;
+      --border-strong: #a89e90;
+      --text: #1c1a17;
+      --text-muted: #6b6358;
+      --text-dim: #9c9289;
+      --accent: #2a5f4f;
+      --accent-light: #edf4f1;
+      --accent-rule: #3d7a65;
+      --tag-bg: #ebe7e0;
+      --mono: 'JetBrains Mono', 'Consolas', 'Menlo', monospace;
+      --serif: 'DejaVu Serif', 'Georgia', 'Times New Roman', serif;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--serif);
+      font-size: 15px;
+      line-height: 1.7;
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    /* ---- Layout ---- */
+    .wrap {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ---- Nav ---- */
+    .site-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(247, 244, 239, 0.94);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 0;
+    }
+
+    .nav-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text);
+    }
+
+    .brand-ns {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 600;
+      background: var(--accent);
+      color: #fff;
+      padding: 3px 7px;
+      border-radius: 3px;
+      letter-spacing: 0.04em;
+    }
+
+    .brand-name {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+    }
+
+    .brand-sep {
+      color: var(--text-dim);
+      font-family: var(--mono);
+      font-size: 12px;
+    }
+
+    .btn-copy-all {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-family: var(--mono);
+      font-size: 11.5px;
+      font-weight: 600;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.15s;
+      white-space: nowrap;
+    }
+
+    .btn-copy-all:hover {
+      background: #1f4a3c;
+    }
+
+    /* ---- Hero ---- */
+    .hero {
+      padding: 52px 0 36px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .tag-row {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .tag {
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 3px 8px;
+      background: var(--tag-bg);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      color: var(--text-muted);
+    }
+
+    .tag.green {
+      background: var(--accent-light);
+      border-color: #b0d4c8;
+      color: var(--accent);
+    }
+
+    .hero h1 {
+      font-size: clamp(22px, 5vw, 34px);
+      font-weight: 700;
+      line-height: 1.25;
+      letter-spacing: -0.01em;
+      margin-bottom: 12px;
+      color: var(--text);
+    }
+
+    .hero p {
+      font-size: 15px;
+      color: var(--text-muted);
+      max-width: 640px;
+      font-style: italic;
+    }
+
+    /* ---- Toolbar ---- */
+    .toolbar {
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .pill-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      font-family: var(--mono);
+      font-size: 11px;
+      padding: 5px 11px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.12s;
+      white-space: nowrap;
+    }
+
+    .pill:hover {
+      border-color: var(--border-strong);
+      color: var(--text);
+    }
+
+    .pill.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .search-wrap {
+      position: relative;
+    }
+
+    .search-wrap input {
+      font-family: var(--mono);
+      font-size: 12px;
+      padding: 7px 12px 7px 32px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text);
+      outline: none;
+      width: 220px;
+      max-width: 100%;
+      transition: border-color 0.12s;
+    }
+
+    .search-wrap input:focus {
+      border-color: var(--accent);
+    }
+
+    .search-wrap svg {
+      position: absolute;
+      left: 9px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-dim);
+    }
+
+    /* ---- Formula Feed ---- */
+    .feed {
+      padding: 32px 0 72px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    /* ---- Formula Card ---- */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 28px;
+      transition: border-color 0.15s;
+    }
+
+    .card:hover {
+      border-color: var(--border-strong);
+    }
+
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .card-labels {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .eq-label {
+      font-family: var(--mono);
+      font-size: 10.5px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+    }
+
+    .card-title {
+      font-size: 19px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.3;
+    }
+
+    .src-badge {
+      font-family: var(--mono);
+      font-size: 10.5px;
+      padding: 4px 9px;
+      background: var(--tag-bg);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      color: var(--text-muted);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .src-badge::before {
+      content: '↗ ';
+      color: var(--accent);
+    }
+
+    /* ---- Math Display ---- */
+    .math-box {
+      background: var(--bg-math);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent-rule);
+      border-radius: 4px;
+      padding: 22px 24px;
+      margin: 0 0 20px;
+      overflow-x: auto;
+      text-align: center;
+    }
+
+    /* Make KaTeX display equations centered and properly sized */
+    .math-box .katex-display {
+      margin: 0.35em 0;
+      overflow-x: auto;
+      overflow-y: hidden;
+    }
+
+    .math-box .katex {
+      font-size: 1.08em;
+    }
+
+    /* ---- Description ---- */
+    .card-desc {
+      font-size: 14.5px;
+      color: var(--text-muted);
+      line-height: 1.72;
+      margin-bottom: 18px;
+    }
+
+    .card-desc strong {
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    /* ---- Variable Table ---- */
+    .var-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-bottom: 20px;
+      font-family: var(--serif);
+    }
+
+    .var-table th {
+      text-align: left;
+      font-family: var(--mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-dim);
+      padding: 6px 10px;
+      border-bottom: 1px solid var(--border);
+      font-weight: 600;
+    }
+
+    .var-table td {
+      padding: 6px 10px;
+      border-bottom: 1px solid #eee8df;
+      vertical-align: top;
+      color: var(--text-muted);
+    }
+
+    .var-table td:first-child {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--text);
+      white-space: nowrap;
+      width: 180px;
+    }
+
+    .var-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* ---- Card Footer Actions ---- */
+    .card-foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .foot-left {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-sm {
+      font-family: var(--mono);
+      font-size: 11px;
+      padding: 5px 11px;
+      border-radius: 3px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.12s;
+    }
+
+    .btn-sm:hover {
+      border-color: var(--border-strong);
+      color: var(--text);
+      background: var(--tag-bg);
+    }
+
+    .btn-sm.active {
+      background: var(--accent-light);
+      color: var(--accent);
+      border-color: #b0d4c8;
+    }
+
+    .eq-num {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-dim);
+      align-self: center;
+    }
+
+    /* ---- Code Drawer ---- */
+    .code-drawer {
+      display: none;
+      margin-top: 14px;
+      border-radius: 4px;
+      overflow: hidden;
+      border: 1px solid #3a3a4f;
+    }
+
+    .code-drawer.open {
+      display: block;
+    }
+
+    .code-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #2a2a3f;
+      padding: 7px 12px;
+      font-family: var(--mono);
+      font-size: 10.5px;
+      color: #8b8fa8;
+      border-bottom: 1px solid #3a3a4f;
+    }
+
+    .code-drawer pre {
+      background: var(--bg-code);
+      padding: 16px;
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1.6;
+      color: #cdd6f4;
+      overflow-x: auto;
+      white-space: pre;
+    }
+
+    /* ---- Toast ---- */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--accent);
+      color: #fff;
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 10px 18px;
+      border-radius: 4px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.18);
+      transform: translateY(80px);
+      opacity: 0;
+      transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 999;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    /* ---- Footer ---- */
+    .site-footer {
+      border-top: 1px solid var(--border);
+      padding: 28px 0 48px;
+    }
+
+    .footer-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .footer-left p {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .footer-left p+p {
+      margin-top: 4px;
+      font-style: italic;
+      color: var(--text-dim);
+      font-size: 12px;
+    }
+
+    .footer-right {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-dim);
+      text-align: right;
+    }
+
+    /* ---- Responsive ---- */
+    @media (max-width: 640px) {
+      .wrap {
+        padding: 0 16px;
+      }
+
+      .card {
+        padding: 20px 16px;
+      }
+
+      .math-box {
+        padding: 16px 10px;
+      }
+
+      .card-top {
+        flex-direction: column;
+      }
+
+      .src-badge {
+        align-self: flex-start;
+      }
+
+      .card-foot {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .search-wrap input {
+        width: 100%;
+      }
+
+      .toolbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .nav-row {
+        gap: 8px;
+      }
+
+      .btn-copy-all {
+        font-size: 11px;
+        padding: 7px 11px;
+      }
+
+      .var-table td:first-child {
+        width: auto;
+      }
+    }
+
+    @media (max-width: 400px) {
+      .hero h1 {
+        font-size: 20px;
+      }
+
+      .pill-row {
+        gap: 4px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ============================================================
+     NAV
+     ============================================================ -->
+  <nav class="site-nav">
+    <div class="wrap">
+      <div class="nav-row">
+        <a href="../" class="brand">
+          <span class="brand-ns">NS</span>
+          <span class="brand-name">NirmalSagar</span>
+          <span class="brand-sep">/ Core Equations</span>
+        </a>
+        <button class="btn-copy-all" onclick="copyAllLatex()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <rect x="9" y="9" width="13" height="13" rx="2" />
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+          </svg>
+          Copy All LaTeX for Paper
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ============================================================
+     HERO
+     ============================================================ -->
+  <section class="hero">
+    <div class="wrap">
+      <div class="tag-row">
+        <span class="tag green">Project Mathematics</span>
+        <span class="tag">8 Formulations</span>
+        <span class="tag">Codebase-Verified</span>
+        <span class="tag">Overleaf Ready</span>
+      </div>
+      <h1>Mathematical Formulations &amp; Core Algorithms</h1>
+      <p>Essential mathematical formulations actively implemented in NirmalSagar's optical restoration, multi-scale
+        detection, temporal tracking, and benthic hazard analytics pipeline.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================
+     TOOLBAR
+     ============================================================ -->
+  <div class="toolbar">
+    <div class="wrap"
+      style="width:100%; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+      <div class="pill-row">
+        <button class="pill active" onclick="setFilter('all',this)">All (8)</button>
+        <button class="pill" onclick="setFilter('optical',this)">Optical Restoration</button>
+        <button class="pill" onclick="setFilter('sahi',this)">SAHI &amp; Detection</button>
+        <button class="pill" onclick="setFilter('tracking',this)">Temporal Tracking</button>
+        <button class="pill" onclick="setFilter('analytics',this)">Benthic Hazard</button>
+      </div>
+      <div class="search-wrap">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8" />
+          <line x1="21" y1="21" x2="16.65" y2="16.65" />
+        </svg>
+        <input type="text" id="searchInput" placeholder="Search equations, variables…" oninput="filterCards()" />
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+     FORMULA FEED
+     ============================================================ -->
+  <main>
+    <div class="wrap">
+      <div class="feed" id="feed">
+
+        <!-- ── EQ 01 ── -->
+        <article class="card" data-cat="optical">
+          <div class="card-top">
+            <div class="card-labels">
+              <span class="eq-label">Formula 01 · Optical Restoration</span>
+              <h2 class="card-title">Gray-World Chromatic Normalization</h2>
+            </div>
+            <span class="src-badge">backend/app.py · preprocess_underwater()</span>
+          </div>
+
+          <div class="math-box" id="math-01">
+            \[\mu_c = \frac{1}{|\Omega|} \sum_{(x,y) \in \Omega} I_c(x,y), \qquad \mu_{\text{gray}} = \frac{\mu_R +
+            \mu_G + \mu_B}{3}\]
+            \[I'_c(x,y) = \operatorname{clip}\!\left( I_c(x,y) \cdot \frac{\mu_{\text{gray}}}{\mu_c},\; 0,\; 255
+            \right)\]
+          </div>
+
+          <div class="latex-raw" style="display:none;">\mu_c = \frac{1}{|\Omega|} \sum_{(x,y) \in \Omega} I_c(x,y),
+            \quad \mu_{\text{gray}} = \frac{\mu_R + \mu_G + \mu_B}{3} \\ I'_c(x,y) = \operatorname{clip}\left( I_c(x,y)
+            \cdot \frac{\mu_{\text{gray}}}{\mu_c},\; 0,\; 255 \right)</div>
+
+          <p class="card-desc"><strong>Why it's used:</strong> Eliminates dominant yellowish-brown and murky green color
+            casts common in Indian coastal waters. By assuming the spatial average across the entire underwater scene is
+            neutral achromatic gray, it computes per-channel gain scalars that restore lost red/blue wavelength energy.
+          </p>
+
+          <table class="var-table">
+            <thead>
+              <tr>
+                <th>Symbol</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>I_c(x,y)</td>
+                <td>Input color channel (\(c \in \{B,G,R\}\))</td>
+              </tr>
+              <tr>
+                <td>\mu_c</td>
+                <td>Spatial mean of channel \(c\)</td>
+              </tr>
+              <tr>
+                <td>\mu_{\text{gray}}</td>
+                <td>Global equal-energy achromatic baseline</td>
+              </tr>
+              <tr>
+                <td>I'_c</td>
+                <td>Chromatically balanced output pixel</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="card-foot">
+            <div class="foot-left">
+              <button class="btn-sm" onclick="copyCardLatex(this)">Copy LaTeX</button>
+              <button class="btn-sm" onclick="toggleCode('c01',this)">View Code</button>
+            </div>
+            <span class="eq-num">Eq. (1)</span>
+          </div>
+          <div class="code-drawer" id="c01">
+            <div class="code-head"><span>backend/app.py</span><span>Python 3.11</span></div>
+            <pre># Chromatic Balancing (Gray-World / Von Kries)
+img_f = img_bgr.astype(np.float32)
+b, g, r = cv2.split(img_f)
+mean_b, mean_g, mean_r = np.mean(b) or 1.0, np.mean(g) or 1.0, np.mean(r) or 1.0
+mean_gray = (mean_b + mean_g + mean_r) / 3.0
+
+b = np.clip(b * (mean_gray / mean_b), 0, 255)
+g = np.clip(g * (mean_gray / mean_g), 0, 255)
+r = np.clip(r * (mean_gray / mean_r), 0, 255)
+balanced = cv2.merge([b, g, r]).astype(np.uint8)</pre>
+          </div>
+        </article>
+
+        <!-- ── EQ 02 ── -->
+        <article class="card" data-cat="optical">
+          <div class="card-top">
+            <div class="card-labels">
+              <span class="eq-label">Formula 02 · Optical Restoration</span>
+              <h2 class="card-title">CLAHE in CIELAB Luminance Space</h2>
+            </div>
+            <span class="src-badge">backend/app.py · preprocess_underwater()</span>
+          </div>
+
+          <div class="math-box" id="math-02">
+            \[h_{\text{clip}}(k) = \min\!\left(h(k),\; \beta_{\text{clip}}\right), \qquad h_{\text{redist}}(k) =
+            h_{\text{clip}}(k) + \frac{N_{\text{excess}}}{256}\]
+            \[s_k = \sum_{j=0}^{k} \frac{h_{\text{redist}}(j)}{M \times N} \times 255\]
+          </div>
+
+          <div class="latex-raw" style="display:none;">h_{\text{clip}}(k) = \min(h(k),\, \beta_{\text{clip}}), \quad
+            h_{\text{redist}}(k) = h_{\text{clip}}(k) + \frac{N_{\text{excess}}}{256} \\ s_k = \sum_{j=0}^k
+            \frac{h_{\text{redist}}(j)}{M \times N} \times 255</div>
+
+          <p class="card-desc"><strong>Why it's used:</strong> Pierces through suspended sediment particulate haze. By
+            converting the image to CIELAB space and enhancing only the Luminance (\(L^*\)) channel with an \(8 \times
+            8\) tile grid and clip limit \(\beta_{\text{clip}} = 2.8\), it boosts local contrast without distorting
+            color information or amplifying underwater backscatter noise.</p>
+
+          <table class="var-table">
+            <thead>
+              <tr>
+                <th>Symbol</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>h(k)</td>
+                <td>Local tile histogram bin count at intensity \(k\)</td>
+              </tr>
+              <tr>
+                <td>\beta_{\text{clip}}</td>
+                <td>Clip threshold (\(\beta = 2.8\) in implementation)</td>
+              </tr>
+              <tr>
+                <td>N_{\text{excess}}</td>
+                <td>Total pixel count exceeding the clip threshold</td>
+              </tr>
+              <tr>
+                <td>s_k</td>
+                <td>Equalized cumulative luminance output value</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="card-foot">
+            <div class="foot-left">
+              <button class="btn-sm" onclick="copyCardLatex(this)">Copy LaTeX</button>
+              <button class="btn-sm" onclick="toggleCode('c02',this)">View Code</button>
+            </div>
+            <span class="eq-num">Eq. (2)</span>
+          </div>
+          <div class="code-drawer" id="c02">
+            <div class="code-head"><span>backend/app.py</span><span>Python 3.11</span></div>
+            <pre># Pierce through turbidity in LAB space
+lab = cv2.cvtColor(balanced, cv2.COLOR_BGR2LAB)
+l, a, bb = cv2.split(lab)
+clahe = cv2.createCLAHE(clipLimit=2.8, tileGridSize=(8, 8))
+l_enhanced = clahe.apply(l)
+restored = cv2.cvtColor(cv2.merge([l_enhanced, a, bb]), cv2.COLOR_LAB2BGR)</pre>
+          </div>
+        </article>
+
+        <!-- ── EQ 03 ── -->
+        <article class="card" data-cat="optical">
+          <div class="card-top">
+            <div class="card-labels">
+              <span class="eq-label">Formula 03 · Optical Restoration</span>
+              <h2 class="card-title">High-Frequency Bio-Fouling Contour Sharpening</h2>
+            </div>
+            <span class="src-badge">backend/app.py · preprocess_underwater()</span>
+          </div>
+
+          <div class="math-box" id="math-03">
+            \[I_{\text{sharp}} = 1.35 \cdot I_{\text{restored}} \;-\; 0.35 \cdot \bigl(I_{\text{restored}} *
+            G_{\sigma=2.5}\bigr)\]
+          </div>
+
+          <div class="latex-raw" style="display:none;">I_{\text{sharp}} = 1.35 \cdot I_{\text{restored}} - 0.35 \cdot
+            \left( I_{\text{restored}} * G_{\sigma=2.5} \right)</div>
+
+          <p class="card-desc"><strong>Why it's used:</strong> Marine debris submerged for extended periods develops
+            algae growth and bio-fouling that softens object boundaries into the seabed. Unsharp masking subtracts a
+            Gaussian low-pass blur (\(\sigma=2.5\)) to emphasize high-frequency edges of degraded plastic and derelict
+            gear.</p>
+
+          <table class="var-table">
+            <thead>
+              <tr>
+                <th>Symbol</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>G_\sigma</td>
+                <td>Gaussian smoothing kernel (\(\sigma = 2.5\))</td>
+              </tr>
+              <tr>
+                <td>1.35</td>
+                <td>Identity scaling coefficient</td>
+              </tr>
+              <tr>
+                <td>−0.35</td>
+                <td>High-pass edge amplification weight</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="card-foot">
+            <div class="foot-left">
+              <button class="btn-sm" onclick="copyCardLatex(this)">Copy LaTeX</button>
+              <button class="btn-sm" onclick="toggleCode('c03',this)">View Code</button>
+            </div>
+            <span class="eq-num">Eq. (3)</span>
+          </div>
+          <div class="code-drawer" id="c03">
+            <div class="code-head"><span>backend/app.py</span><span>Python 3.11</span></div>
+            <pre># Subtle contour sharpening for bio-fouled edges
+blurred = cv2.GaussianBlur(restored, (0, 0), sigmaX=2.5)
+sharpened = cv2.addWeighted(restored, 1.35, blurred, -0.35, 0)
+return sharpened</pre>
+          </div>
+        </article>
+
+        <!-- ── EQ 04 ── -->
+        <article class="card" data-cat="sahi">
+          <div class="card-top">
+            <div class="card-labels">
+              <span class="eq-label">Formula 04 · SAHI &amp; Detection</span>
+              <h2 class="card-title">Multi-Scale SAHI Sliding Window Projection</h2>
+            </div>
+            <span class="src-badge">backend/app.py · run_sahi_inference()</span>
+          </div>
+
+          <div class="math-box" id="math-04">
+            \[\Delta_s = S \cdot (1 - \rho), \qquad x_j \in \bigl\{ 0,\; \Delta_s,\; 2\Delta_s,\; \dots,\; W - S
+            \bigr\}\]
+            \[\mathbf{b}_{\text{global}} = \begin{bmatrix} x_{\min}^{\text{local}} + x_j \\ y_{\min}^{\text{local}} +
+            y_i \\ x_{\max}^{\text{local}} + x_j \\ y_{\max}^{\text{local}} + y_i \end{bmatrix}\]
+          </div>
+
+          <div class="latex-raw" style="display:none;">\Delta_s = S \cdot (1 - \rho), \quad x_j \in \left\{ 0, \Delta_s,
+            2\Delta_s, \dots, W - S \right\} \\ \mathbf{b}_{\text{global}} = \begin{bmatrix} x_{\min}^{\text{local}} +
+            x_j \\ y_{\min}^{\text{local}} + y_i \\ x_{\max}^{\text{local}} + x_j \\ y_{\max}^{\text{local}} + y_i
+            \end{bmatrix}</div>
+
+          <p class="card-desc"><strong>Why it's used:</strong> Standard YOLO downscales entire frames to 640&nbsp;px,
+            destroying tiny bottle caps, beverage cans, and micro-fragments. SAHI extracts overlapping crops at \(S \in
+            \{512, 384\}\)&nbsp;px with overlap ratio \(\rho=0.25\), predicts at native sensor resolution, and maps
+            detections back to global coordinates.</p>
+
+          <table class="var-table">
+            <thead>
+              <tr>
+                <th>Symbol</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>S</td>
+                <td>Tile window size (512 px, 384 px)</td>
+              </tr>
+              <tr>
+                <td>\rho</td>
+                <td>Overlap ratio (\(\rho = 0.25\))</td>
+              </tr>
+              <tr>
+                <td>\Delta_s</td>
+                <td>Stride step (340 px, 240 px)</td>
+              </tr>
+              <tr>
+                <td>(x_j, y_i)</td>
+                <td>Crop origin offset in source frame</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="card-foot">
+            <div class="foot-left">
+              <button class="btn-sm" onclick="copyCardLatex(this)">Copy LaTeX</button>
+              <button class="btn-sm" onclick="toggleCode('c04',this)">View Code</button>
+            </div>
+            <span class="eq-num">Eq. (4)</span>
+          </div>
+          <div class="code-drawer" id="c04">
+            <div class="code-head"><span>backend/app.py</span><span>Python 3.11</span></div>
+            <pre>for sz, step in [(512, 340), (384, 240)]:
+    y_starts = list(range(0, max(1, h - sz + 1), step))
+    x_starts = list(range(0, max(1, w - sz + 1), step))
+    for y1 in y_starts:
+        for x1 in x_starts:
+            crop = infer_base[y1 : y1 + sz, x1 : x1 + sz]
+            for b in slice_res.boxes:
+                bx1, by1, bx2, by2 = b.xyxy[0].cpu().numpy()
+                all_boxes.append([bx1 + x1, by1 + y1, bx2 + x1, by2 + y1])</pre>
+          </div>
+        </article>
+
+        <!-- ── EQ 05 ── -->
+        <article class="card" data-cat="sahi">
+          <div class="card-top">
+            <div class="card-labels">
+              <span class="eq-label">Formula 05 · SAHI &amp; Detection</span>
+              <h2 class="card-title">Intersection-over-Union (IoU) &amp; Multi-Scale NMS</h2>
+            </div>
+            <span class="src-badge">backend/app.py · compute_iou() &amp; NMSBoxes()</span>
+          </div>
+
+          <div class="math-box" id="math-05">
+            \[\operatorname{IoU}(B_1, B_2) = \frac{\operatorname{Area}(B_1 \cap B_2)}{\operatorname{Area}(B_1 \cup
+            B_2)}\]
+            \[\mathcal{D}_{\text{final}} = \operatorname{NMS}\!\left(\{\mathbf{b}_k, c_k, s_k\},\; \tau_{\text{conf}} =
+            0.03,\; \tau_{\text{IoU}} = 0.40\right)\]
+          </div>
+
+          <div class="latex-raw" style="display:none;">\operatorname{IoU}(B_1, B_2) = \frac{\operatorname{Area}(B_1 \cap
+            B_2)}{\operatorname{Area}(B_1 \cup B_2)} \\ \mathcal{D}_{\text{final}} = \operatorname{NMS}\left(\{
+            \mathbf{b}_k, c_k, s_k \},\, \tau_{\text{conf}} = 0.03,\, \tau_{\text{IoU}} = 0.40 \right)</div>
+
+          <p class="card-desc"><strong>Why it's used:</strong> Multi-scale slicing and ensemble models generate
+            overlapping candidate proposals for the same debris item. Global NMS suppresses redundant boxes when their
+            pairwise IoU exceeds \(\tau_{\text{IoU}} = 0.40\), retaining the highest-confidence bounding box.</p>
+
+          <table class="var-table">
+            <thead>
+              <tr>
+                <th>Symbol</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>B_1, B_2</td>
+                <td>Candidate bounding boxes being compared</td>
+              </tr>
+              <tr>
+                <td>\tau_{\text{conf}}</td>
+                <td>Minimum confidence filter (0.03)</td>
+              </tr>
+              <tr>
+                <td>\tau_{\text{IoU}}</td>
+                <td>NMS suppression threshold (0.40)</td>
+              </tr>
+              <tr>
+                <td>\mathcal{D}_{\text{final}}</td>
+                <td>Deduplicated output detections</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="card-foot">
+            <div class="foot-left">
+              <button class="btn-sm" onclick="copyCardLatex(this)">Copy LaTeX</button>
+              <button class="btn-sm" onclick="toggleCode('c05',this)">View Code</button>
+            </div>
+            <span class="eq-num">Eq. (5)</span>
+          </div>
+          <div class="code-drawer" id="c05">
+            <div class="code-head"><span>backend/app.py</span><span>Python 3.11</span></div>
+            <pre>def compute_iou(box1, box2):
+    x1, y1 = max(box1[0], box2[0]), max(box1[1], box2[1])
+    x2, y2 = min(box1[2], box2[2]), min(box1[3], box2[3])
+    inter = max(0.0, x2 - x1) * max(0.0, y2 - y1)
+    area1 = max(0.0, box1[2] - box1[0]) * max(0.0, box1[3] - box1[1])
+    area2 = max(0.0, box2[2] - box2[0]) * max(0.0, box2[3] - box2[1])
+    union = area1 + area2 - inter
+    return inter / union if union > 0 else 0.0
+
+# Global NMS Deduplication across all multi-scale proposals
+indices = cv2.dnn.NMSBoxes(xywh, all_confs, conf, iou_thresh=0.40)</pre>
+          </div>
+        </article>
+
+        <!-- ── EQ 06 ── -->
+        <article class="card" data-cat="tracking">
+          <div class="card-top">
+            <div class="card-labels">
+              <span class="eq-label">Formula 06 · Temporal Tracking</span>
+              <h2 class="card-title">Temporal IoU Matching &amp; Consensus Class Voting</h2>
+            </div>
+            <span class="src-badge">backend/app.py · predict_video()</span>
+          </div>
+
+          <div class="math-box" id="math-06">
+            \[\text{Association Condition:} \quad \operatorname{IoU}(B_{\text{curr}},\, B_{\text{track}}) \;\ge\; 0.25\]
+            \[V_k(c) = \sum_{\substack{t \in \mathcal{T}_k \\ c_t = c}} \operatorname{conf}_t, \qquad c^*_k =
+            \arg\max_{c \in \mathcal{C}}\; V_k(c)\]
+          </div>
+
+          <div class="latex-raw" style="display:none;">\text{Association Condition: }
+            \operatorname{IoU}(B_{\text{curr}}, B_{\text{track}}) \ge 0.25 \\ V_k(c) = \sum_{t \in \mathcal{T}_k,\, c_t
+            = c} \operatorname{conf}_t, \quad c^*_k = \arg\max_{c \in \mathcal{C}} V_k(c)</div>
+
+          <p class="card-desc"><strong>Why it's used:</strong> Water turbidity and ROV camera motion cause single-frame
+            classifications to oscillate erratically (e.g., plastic bottle flickering to metal can). Bipartite IoU
+            matching associates detections across consecutive keyframes, while confidence-weighted consensus voting
+            stabilizes the track label.</p>
+
+          <table class="var-table">
+            <thead>
+              <tr>
+                <th>Symbol</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>\mathcal{T}_k</td>
+                <td>Frame observation history for track \(k\)</td>
+              </tr>
+              <tr>
+                <td>V_k(c)</td>
+                <td>Accumulated confidence vote for class \(c\)</td>
+              </tr>
+              <tr>
+                <td>c^*_k</td>
+                <td>Stable consensus class assignment for track \(k\)</td>
+              </tr>
+              <tr>
+                <td>0.25</td>
+                <td>Minimum temporal IoU association threshold</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="card-foot">
+            <div class="foot-left">
+              <button class="btn-sm" onclick="copyCardLatex(this)">Copy LaTeX</button>
+              <button class="btn-sm" onclick="toggleCode('c06',this)">View Code</button>
+            </div>
+            <span class="eq-num">Eq. (6)</span>
+          </div>
+          <div class="code-drawer" id="c06">
+            <div class="code-head"><span>backend/app.py</span><span>Python 3.11</span></div>
+            <pre>if best_iou >= 0.25 and best_tid is not None:
+    tr = active_tracks[best_tid]
+    tr["bbox"] = b
+    tr["last_seen"] = frame_idx
+    tr["class_votes"][d["class"]] = tr["class_votes"].get(d["class"], 0) + d["conf"]
+    # Consensus class prevents class flickering between frames
+    consensus_cls = max(tr["class_votes"].items(), key=lambda x: x[1])[0]</pre>
+          </div>
+        </article>
+
+        <!-- ── EQ 07 ── -->
+        <article class="card" data-cat="analytics">
+          <div class="card-top">
+            <div class="card-labels">
+              <span class="eq-label">Formula 07 · Benthic Hazard</span>
+              <h2 class="card-title">Seabed Coverage Ratio (SCR)</h2>
+            </div>
+            <span class="src-badge">inferenceService.js</span>
+          </div>
+
+          <div class="math-box" id="math-07">
+            \[\operatorname{SCR} = \min\!\left(100,\; \frac{\displaystyle\sum_{i=1}^{M}
+            \operatorname{Area}(B_i)}{W_{\text{frame}} \times H_{\text{frame}}} \times 100\right)\]
+          </div>
+
+          <div class="latex-raw" style="display:none;">\operatorname{SCR} = \min\left(100, \, \frac{\sum_{i=1}^M
+            \operatorname{Area}(B_i)}{W_{\text{frame}} \times H_{\text{frame}}} \times 100\right)</div>
+
+          <p class="card-desc"><strong>Why it's used:</strong> Item count alone fails to distinguish between 5 tiny
+            bottle caps versus 5 massive derelict fishing nets or discarded vehicle tires. SCR calculates the true
+            percentage of benthic substrate smothered by anthropogenic debris.</p>
+
+          <table class="var-table">
+            <thead>
+              <tr>
+                <th>Symbol</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>M</td>
+                <td>Number of detected debris instances</td>
+              </tr>
+              <tr>
+                <td>Area(B_i)</td>
+                <td>Pixel area of box \((x_2-x_1)\times(y_2-y_1)\)</td>
+              </tr>
+              <tr>
+                <td>W × H</td>
+                <td>Full frame sensor resolution (pixels)</td>
+              </tr>
+              <tr>
+                <td>SCR</td>
+                <td>Percentage of seafloor area blanketed (%)</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="card-foot">
+            <div class="foot-left">
+              <button class="btn-sm" onclick="copyCardLatex(this)">Copy LaTeX</button>
+              <button class="btn-sm" onclick="toggleCode('c07',this)">View Code</button>
+            </div>
+            <span class="eq-num">Eq. (7)</span>
+          </div>
+          <div class="code-drawer" id="c07">
+            <div class="code-head"><span>frontend/src/services/inferenceService.js</span><span>JavaScript ES6</span>
+            </div>
+            <pre>const totalFrameArea = frameW * frameH;
+const coverageRatio = totalFrameArea > 0
+  ? Math.min(100, Math.round((totalBoxAreaPx / totalFrameArea) * 1000) / 10)
+  : 0;</pre>
+          </div>
+        </article>
+
+        <!-- ── EQ 08 ── -->
+        <article class="card" data-cat="analytics">
+          <div class="card-top">
+            <div class="card-labels">
+              <span class="eq-label">Formula 08 · Benthic Hazard</span>
+              <h2 class="card-title">Continuous Ecological Hazard Index (EHI)</h2>
+            </div>
+            <span class="src-badge">inferenceService.js</span>
+          </div>
+
+          <div class="math-box" id="math-08">
+            \[\operatorname{EHI} = \min\!\left(100,\;\max\!\left(0,\; 14\,N_{\text{plastic}} + 9\,N_{\text{metal}} +
+            6\,N_{\text{other}} + 3.5 \times \operatorname{SCR}\right)\right)\]
+          </div>
+
+          <div class="latex-raw" style="display:none;">\operatorname{EHI} = \min\left(100,\, \max\left(0,\, 14
+            N_{\text{plastic}} + 9 N_{\text{metal}} + 6 N_{\text{other}} + 3.5 \times \operatorname{SCR} \right)\right)
+          </div>
+
+          <p class="card-desc"><strong>Why it's used:</strong> Provides environmental authorities and cleanup fleets
+            with a standardized 0–100 threat score. Weights reflect empirical marine toxicity and persistence:
+            macro-plastics receive the highest penalty (14) due to microplastic fragmentation and trophic ingestion
+            risks, followed by metals (9) for galvanic leaching, and substrate coverage (3.5).</p>
+
+          <table class="var-table">
+            <thead>
+              <tr>
+                <th>Symbol</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>N_{\text{plastic}}</td>
+                <td>Detected plastic item count — weight 14</td>
+              </tr>
+              <tr>
+                <td>N_{\text{metal}}</td>
+                <td>Detected metal item count — weight 9</td>
+              </tr>
+              <tr>
+                <td>N_{\text{other}}</td>
+                <td>Other debris (tires, nets) — weight 6</td>
+              </tr>
+              <tr>
+                <td>3.5 × SCR</td>
+                <td>Spatial benthic smothering penalty</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="card-foot">
+            <div class="foot-left">
+              <button class="btn-sm" onclick="copyCardLatex(this)">Copy LaTeX</button>
+              <button class="btn-sm" onclick="toggleCode('c08',this)">View Code</button>
+            </div>
+            <span class="eq-num">Eq. (8)</span>
+          </div>
+          <div class="code-drawer" id="c08">
+            <div class="code-head"><span>frontend/src/services/inferenceService.js</span><span>JavaScript ES6</span>
+            </div>
+            <pre>let rawScore = 0;
+if (numDetections > 0) {
+  rawScore = (plasticCount * 14) + (metalCount * 9) + (otherCount * 6) + (coverageRatio * 3.5);
+}
+const threatScore = Math.min(100, Math.max(0, Math.round(rawScore)));</pre>
+          </div>
+        </article>
+
+      </div><!-- /feed -->
+    </div><!-- /wrap -->
+  </main>
+
+  <!-- ============================================================
+     FOOTER
+     ============================================================ -->
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-row">
+        <div class="footer-left">
+          <p><strong>NirmalSagar</strong> — Underwater Marine Debris &amp; Plastic Detection System</p>
+          <p>8 core mathematical formulations, all codebase-verified and Overleaf-ready.</p>
+        </div>
+        <div class="footer-right">
+          Aditya Kate · Suman Manik<br />Tanmay Harmalkar · Abdullah Khan
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast -->
+  <div class="toast" id="toast">✓ &nbsp;Copied to clipboard</div>
+
+  <!-- ============================================================
+     SCRIPTS
+     ============================================================ -->
+  <script>
+    /* ── KaTeX: render all \[...\] and \(...\) blocks ── */
+    window.addEventListener('load', function () {
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: '\\[', right: '\\]', display: true },
+          { left: '\\(', right: '\\)', display: false }
+        ],
+        throwOnError: false,
+        trust: true,
+        strict: false
+      });
+    });
+
+    /* ── Copy single card LaTeX ── */
+    function copyCardLatex(btn) {
+      var card = btn.closest('.card');
+      var raw = card.querySelector('.latex-raw');
+      if (!raw) return;
+      navigator.clipboard.writeText(raw.textContent.trim()).then(function () {
+        btn.textContent = 'Copied!';
+        btn.classList.add('active');
+        toast('LaTeX equation copied');
+        setTimeout(function () {
+          btn.textContent = 'Copy LaTeX';
+          btn.classList.remove('active');
+        }, 2000);
+      });
+    }
+
+    /* ── Toggle code drawer ── */
+    function toggleCode(id, btn) {
+      var el = document.getElementById(id);
+      el.classList.toggle('open');
+      btn.classList.toggle('active');
+      btn.textContent = el.classList.contains('open') ? 'Hide Code' : 'View Code';
+    }
+
+    /* ── Category filter ── */
+    function setFilter(cat, btn) {
+      document.querySelectorAll('.pill').forEach(function (p) { p.classList.remove('active'); });
+      btn.classList.add('active');
+      document.querySelectorAll('.card').forEach(function (c) {
+        c.style.display = (cat === 'all' || c.dataset.cat === cat) ? '' : 'none';
+      });
+    }
+
+    /* ── Search filter ── */
+    function filterCards() {
+      var q = document.getElementById('searchInput').value.toLowerCase().trim();
+      document.querySelectorAll('.card').forEach(function (c) {
+        c.style.display = (!q || c.textContent.toLowerCase().includes(q)) ? '' : 'none';
+      });
+    }
+
+    /* ── Copy all LaTeX for manuscript ── */
+    function copyAllLatex() {
+      var tex = `% =================================================================
+% NirmalSagar: Core Mathematical Formulations for Research Manuscript
+% =================================================================
+
+% Eq. 1: Gray-World Chromatic Balancing
+\\begin{equation}
+\\mu_c = \\frac{1}{|\\Omega|} \\sum_{(x,y) \\in \\Omega} I_c(x,y), \\quad
+\\mu_{\\text{gray}} = \\frac{\\mu_R + \\mu_G + \\mu_B}{3}
+\\end{equation}
+\\begin{equation}
+I'_c(x,y) = \\operatorname{clip}\\!\\left( I_c(x,y) \\cdot \\frac{\\mu_{\\text{gray}}}{\\mu_c},\\; 0,\\; 255 \\right)
+\\end{equation}
+
+% Eq. 2: CLAHE in CIELAB Luminance Space
+\\begin{equation}
+h_{\\text{clip}}(k) = \\min\\!\\left(h(k),\\; \\beta_{\\text{clip}}\\right), \\quad
+h_{\\text{redist}}(k) = h_{\\text{clip}}(k) + \\frac{N_{\\text{excess}}}{256}
+\\end{equation}
+
+% Eq. 3: High-Frequency Bio-Fouling Contour Sharpening
+\\begin{equation}
+I_{\\text{sharp}} = 1.35 \\cdot I_{\\text{restored}} - 0.35 \\cdot \\bigl(I_{\\text{restored}} * G_{\\sigma=2.5}\\bigr)
+\\end{equation}
+
+% Eq. 4: SAHI Multi-Scale Patch Coordinate Projection
+\\begin{equation}
+\\Delta_s = S \\cdot (1 - \\rho), \\quad
+\\mathbf{b}_{\\text{global}} = \\begin{bmatrix}
+  x_{\\min}^{\\text{local}} + x_j \\\\ y_{\\min}^{\\text{local}} + y_i \\\\
+  x_{\\max}^{\\text{local}} + x_j \\\\ y_{\\max}^{\\text{local}} + y_i
+\\end{bmatrix}
+\\end{equation}
+
+% Eq. 5: Bounding Box IoU and Global NMS
+\\begin{equation}
+\\operatorname{IoU}(B_1, B_2) = \\frac{\\operatorname{Area}(B_1 \\cap B_2)}{\\operatorname{Area}(B_1 \\cup B_2)}, \\quad
+\\mathcal{D}_{\\text{final}} = \\operatorname{NMS}\\!\\left(\\{\\mathbf{b}_k\\},\\; \\tau_{\\text{conf}} = 0.03,\\; \\tau_{\\text{IoU}} = 0.40\\right)
+\\end{equation}
+
+% Eq. 6: Temporal IoU Matching and Consensus Class Voting
+\\begin{equation}
+V_k(c) = \\sum_{\\substack{t \\in \\mathcal{T}_k \\\\ c_t = c}} \\operatorname{conf}_t, \\qquad
+c^*_k = \\arg\\max_{c \\in \\mathcal{C}}\\; V_k(c)
+\\end{equation}
+
+% Eq. 7: Seabed Coverage Ratio (SCR)
+\\begin{equation}
+\\operatorname{SCR} = \\min\\!\\left(100,\\; \\frac{\\displaystyle\\sum_{i=1}^{M} \\operatorname{Area}(B_i)}{W_{\\text{frame}} \\times H_{\\text{frame}}} \\times 100\\right)
+\\end{equation}
+
+% Eq. 8: Benthic Ecological Hazard Index (EHI)
+\\begin{equation}
+\\operatorname{EHI} = \\min\\!\\left(100,\\;\\max\\!\\left(0,\\; 14\\,N_{\\text{plastic}} + 9\\,N_{\\text{metal}} + 6\\,N_{\\text{other}} + 3.5 \\times \\operatorname{SCR}\\right)\\right)
+\\end{equation}`;
+
+      navigator.clipboard.writeText(tex).then(function () {
+        toast('All 8 LaTeX equations copied!');
+      });
+    }
+
+    /* ── Toast helper ── */
+    function toast(msg) {
+      var el = document.getElementById('toast');
+      el.textContent = '✓  ' + msg;
+      el.classList.add('show');
+      setTimeout(function () { el.classList.remove('show'); }, 2500);
+    }
+  </script>
+
+</body>
+
+</html>
